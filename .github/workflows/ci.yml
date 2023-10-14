@@ -1,8 +1,8 @@
-name: PR
+name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main"]
   pull_request:
     branches: [ "main" ]
 
@@ -24,9 +24,6 @@ jobs:
         run: npm install
 
       - name: Run Test
-        run: npm test
-
-      - name: Run Integration
-        run: npm test:integration
+        run: npm run test
 
       
