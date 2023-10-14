@@ -25,3 +25,10 @@ jobs:
 
       - name: Run Test
         run: npm run test
+        
+  additional_steps:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: Build the app
+        run: npm run build
