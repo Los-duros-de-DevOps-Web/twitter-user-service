@@ -1,0 +1,51 @@
+name: GitFlow Automation
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout del Código
+      uses: actions/checkout@v2
+
+    - name: Configurar Git
+      run: |
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+    - name: Verificar Merge desde Feature en Develop
+      run: |
+        LAST_COMMIT_MESSAGE=$(git log --format=%B -n 1)
+        
+        # Verificar si el mensaje de commit indica un merge desde una rama de feature
+        if echo "$LAST_COMMIT_MESSAGE" | grep -q "Merge branch 'feature/"; then
+          echo "El commit es un merge desde una rama de feature en develop. Ejecutando acciones adicionales..."
+          
+          # Crear la rama de release
+          git checkout develop
+          git pull origin develop
+          git checkout -b release/v${{ github.run_number }}
+          git push origin release/v${{ github.run_number }}
+
+          # Crear el Pull Request de Release a Main
+          uses: peter-evans/create-pull-request@v3
+          with:
+            token: ${{ secrets.PAT }}
+            branch: release/v${{ github.run_number }}
+            base: main
+            title: "Merge Release v${{ github.run_number }} to Main"
+          
+          # Solicitar revisores
+          uses: actions/request-reviewer@v2
+          with:
+            reviewers: GabrielSB19,CamiloCJ09  
+          
+        else
+          echo "El commit no es un merge desde una rama de feature en develop. No se ejecutarán acciones adicionales."
+          exit 0
+        fi
