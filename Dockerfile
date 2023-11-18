@@ -29,4 +29,5 @@ COPY --from=builder /twitter-user-service/node_modules ./node_modules
 COPY --from=builder /twitter-user-service/package.json ./package.json
 
 EXPOSE 3001
+
 CMD ["yarn", "start"]
