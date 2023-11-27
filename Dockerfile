@@ -23,7 +23,6 @@ ENV NODE_ENV production
 COPY --from=builder /twitter-user-service/next.config.js ./
 
 # Copia de otros archivos necesarios
-COPY --from=builder /twitter-user-service/public ./public
 COPY --from=builder /twitter-user-service/.next ./.next
 COPY --from=builder /twitter-user-service/node_modules ./node_modules
 COPY --from=builder /twitter-user-service/package.json ./package.json
